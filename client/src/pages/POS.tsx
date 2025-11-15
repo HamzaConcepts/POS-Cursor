@@ -143,7 +143,6 @@ const POS: React.FC = () => {
       return;
     }
 
-    const total = calculateTotal();
     const paid = parseFloat(amountPaid) || 0;
 
     if (paid < 0) {

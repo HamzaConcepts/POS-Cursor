@@ -4,7 +4,6 @@ import Input from '../components/common/Input';
 import Table from '../components/common/Table';
 import Modal from '../components/common/Modal';
 import api from '../utils/api';
-import { useNavigate } from 'react-router-dom';
 
 interface Sale {
   id: number;
@@ -19,7 +18,6 @@ interface Sale {
 }
 
 const Sales: React.FC = () => {
-  const navigate = useNavigate();
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState('');

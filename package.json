@@ -1,0 +1,17 @@
+{
+  "name": "pos-monorepo",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "scripts": {
+    "build": "npm run build --workspace pos-client",
+    "dev": "npm run dev --workspace pos-client",
+    "dev:server": "npm run dev --workspace pos-backend",
+    "lint": "npm run lint --workspace pos-client"
+  }
+}

@@ -197,7 +197,7 @@ const Dashboard: React.FC = () => {
             <h3 className="text-lg font-bold text-text-primary mb-4">Top 5 Products (Last 30 Days)</h3>
             {stats.topProducts.length > 0 ? (
               <div className="space-y-3">
-                {stats.topProducts.map((product: any, index: number) => (
+                {stats.topProducts.map((product: any) => (
                   <div key={product.id} className="flex justify-between items-center">
                     <div>
                       <div className="font-medium">{product.name}</div>
