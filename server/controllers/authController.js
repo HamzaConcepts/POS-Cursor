@@ -3,6 +3,8 @@ import { queryOne, run } from '../config/database.js';
 import { generateToken } from '../config/auth.js';
 import { body, validationResult } from 'express-validator';
 
+const ALLOWED_ROLES = ['Manager', 'Admin', 'Cashier'];
+
 /**
  * Validate username format
  */
@@ -77,13 +79,107 @@ export const register = async (req, res) => {
       });
     }
 
-    if (!['Manager', 'Admin', 'Cashier'].includes(role)) {
+    if (!ALLOWED_ROLES.includes(role)) {
       return res.status(400).json({
         success: false,
         error: 'Invalid role',
         code: 'INVALID_ROLE'
       });
     }
+
+    /**
+     * Public signup endpoint
+     */
+    export const signup = async (req, res) => {
+      try {
+        const { username, email, password, full_name, role } = req.body;
+
+        if (!username || !email || !password || !full_name || !role) {
+          return res.status(400).json({
+            success: false,
+            error: 'All fields are required',
+            code: 'MISSING_FIELDS'
+          });
+        }
+
+        if (!validateUsername(username)) {
+          return res.status(400).json({
+            success: false,
+            error: 'Username must be 3-50 characters, alphanumeric and underscore only',
+            code: 'INVALID_USERNAME'
+          });
+        }
+
+        if (!validateEmail(email)) {
+          return res.status(400).json({
+            success: false,
+            error: 'Invalid email format',
+            code: 'INVALID_EMAIL'
+          });
+        }
+
+        if (!validatePassword(password)) {
+          return res.status(400).json({
+            success: false,
+            error: 'Password must be at least 8 characters with uppercase, lowercase, and number',
+            code: 'INVALID_PASSWORD'
+          });
+        }
+
+        if (!ALLOWED_ROLES.includes(role)) {
+          return res.status(400).json({
+            success: false,
+            error: 'Invalid role',
+            code: 'INVALID_ROLE'
+          });
+        }
+
+        const existingUser = await queryOne(
+          'SELECT id FROM users WHERE username = $1 OR email = $2',
+          [username, email]
+        );
+
+        if (existingUser) {
+          return res.status(400).json({
+            success: false,
+            error: 'Username or email already exists',
+            code: 'USER_EXISTS'
+          });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const result = await queryOne(
+          `INSERT INTO users (username, email, password_hash, role, full_name)
+           VALUES ($1, $2, $3, $4, $5)
+           RETURNING id`,
+          [username, email, passwordHash, role, full_name]
+        );
+
+        const newUser = await queryOne(
+          'SELECT id, username, email, role, full_name, created_at FROM users WHERE id = $1',
+          [result.id]
+        );
+
+        const token = generateToken(newUser);
+
+        res.status(201).json({
+          success: true,
+          data: {
+            user: newUser,
+            token
+          },
+          message: 'Account created successfully'
+        });
+      } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to create account',
+          code: 'SIGNUP_ERROR'
+        });
+      }
+    };
 
     // Check if username or email already exists
     const existingUser = await queryOne(

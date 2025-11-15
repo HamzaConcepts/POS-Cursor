@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
@@ -64,6 +64,13 @@ const Login: React.FC = () => {
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
+
+        <p className="text-center text-sm text-text-secondary mt-4">
+          Don&apos;t have an account?{' '}
+          <Link to="/signup" className="text-text-primary hover:underline">
+            Create one
+          </Link>
+        </p>
 
         <div className="mt-6 p-4 bg-bg-secondary rounded text-sm text-text-secondary">
           <p className="font-semibold mb-2">Test Credentials:</p>

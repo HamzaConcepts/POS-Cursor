@@ -11,7 +11,7 @@ INSERT INTO users (username, email, password_hash, role, full_name, is_active)
 VALUES (
     'manager',
     'manager@pos.com',
-    '$2b$10$rQ8K8K8K8K8K8K8K8K8K8O8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K', -- Replace with actual hash
+    '$2b$10$qE5Uvj0IASNWFTlLTmJu/.KAXH8GBY7yMbGE9huCzklb0XhApLigK', -- Replace with actual hash
     'Manager',
     'Manager User',
     TRUE
@@ -22,7 +22,7 @@ INSERT INTO users (username, email, password_hash, role, full_name, is_active)
 VALUES (
     'admin',
     'admin@pos.com',
-    '$2b$10$rQ8K8K8K8K8K8K8K8K8K8O8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K', -- Replace with actual hash
+    '$2b$10$X0RfZvg.uwsj9/uGcoL9reObRE/jgcZlbtOn8g2I9rGZ0wtCY2Zwy', -- Replace with actual hash
     'Admin',
     'Admin User',
     TRUE
@@ -33,7 +33,7 @@ INSERT INTO users (username, email, password_hash, role, full_name, is_active)
 VALUES (
     'cashier',
     'cashier@pos.com',
-    '$2b$10$rQ8K8K8K8K8K8K8K8K8K8O8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K', -- Replace with actual hash
+    '$2b$10$ua483PCfujgz0bs38NX5neerXE4as1oM/iaja/uIQOMD.xSZxh0we', -- Replace with actual hash
     'Cashier',
     'Cashier User',
     TRUE

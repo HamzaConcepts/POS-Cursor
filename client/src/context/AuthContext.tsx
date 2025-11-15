@@ -9,10 +9,19 @@ interface User {
   full_name: string;
 }
 
+interface SignupPayload {
+  username: string;
+  email: string;
+  password: string;
+  full_name: string;
+  role: 'Manager' | 'Admin' | 'Cashier';
+}
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (username: string, password: string) => Promise<void>;
+  signup: (payload: SignupPayload) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
@@ -76,20 +85,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const persistSession = (userData: User, tokenData: string) => {
+    setUser(userData);
+    setToken(tokenData);
+    localStorage.setItem('token', tokenData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
   const login = async (username: string, password: string) => {
     try {
       const response = await api.post('/auth/login', { username, password });
       if (response.data.success) {
         const { user: userData, token: tokenData } = response.data.data;
-        setUser(userData);
-        setToken(tokenData);
-        localStorage.setItem('token', tokenData);
-        localStorage.setItem('user', JSON.stringify(userData));
+        persistSession(userData, tokenData);
       } else {
         throw new Error(response.data.error || 'Login failed');
       }
     } catch (error: unknown) {
       let errorMessage = 'Login failed';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { error?: string } }; message?: string };
+        errorMessage = axiosError.response?.data?.error || axiosError.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      throw new Error(errorMessage);
+    }
+  };
+
+  const signup = async (payload: SignupPayload) => {
+    try {
+      const response = await api.post('/auth/signup', payload);
+      if (response.data.success) {
+        const { user: userData, token: tokenData } = response.data.data;
+        persistSession(userData, tokenData);
+      } else {
+        throw new Error(response.data.error || 'Account creation failed');
+      }
+    } catch (error: unknown) {
+      let errorMessage = 'Account creation failed';
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data?: { error?: string } }; message?: string };
         errorMessage = axiosError.response?.data?.error || axiosError.message || errorMessage;
@@ -111,6 +145,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     token,
     login,
+    signup,
     logout,
     isAuthenticated: !!user && !!token,
     loading,
