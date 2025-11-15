@@ -6,7 +6,7 @@
     "server"
   ],
   "engines": {
-    "node": "18.x"
+    "node": "22.x"
   },
   "packageManager": "npm@9.8.1",
   "scripts": {
